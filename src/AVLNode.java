@@ -13,7 +13,6 @@ public class AVLNode {
 
     public AVLNode(int data) {
         this.data = data;
-        this.height =1;
         this.left = null;
         this.right = null;
     }
