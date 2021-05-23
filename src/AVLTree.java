@@ -36,7 +36,7 @@ public class AVLTree {
      * height
      */
     private int height(AVLNode node) {
-        return (node == null) ? 0 : node.height;
+        return (node == null) ? -1 : node.height;
     }
 
     /**
