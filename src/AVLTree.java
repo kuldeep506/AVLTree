@@ -18,64 +18,74 @@ public class AVLTree {
         root = (insert(root, data));
     }
 
-    private AVLNode insert(AVLNode root, int data) {
-        if (root == null) {
+    private AVLNode insert(AVLNode node, int data) {
+        if (node == null) {
             return new AVLNode(data);
         }
-        if (root.data > data) {
-            root.left = (insert(root.left, data));
+        if (node.data > data) {
+            node.left = (insert(node.left, data));
         }
-        if (root.data < data) {
-            root.right = (insert(root.right, data));
+        if (node.data < data) {
+            node.right = (insert(node.right, data));
         }
-        root.height = Math.max(height(root.left), height(root.right)) + 1;
-        return balance(root);
+        node.height = Math.max(height(node.left), height(node.right)) + 1;
+        return balance(node,data);
     }
 
-    /**
-     * height
-     */
+
     private int height(AVLNode node) {
         return (node == null) ? -1 : node.height;
     }
 
     /**
-     * formula to balance the tree
+     * method to balance the tree after new node addition.
      */
-    public AVLNode balance(AVLNode node) {
+    public AVLNode balance(AVLNode node,int data) {
         if (node == null)
             return null;
-        // if tree is left heavy.
-        if (isLeftHeavy(node)) {
-            //if left child of node is right heavy.
-            if (balancedFactor(node.left) < 0) {
-                root.left=leftRotation(node.left);
-                return rightRotation(node.right);
-            }
-            //if tree is left skew tree .
-//            if (balancedFactor(node.left) > 0) {
-//                return rightRotation(node.left);
-//            }
+        // case1. if tree is left heavy and data is less than node.left.data
+        /**
+         * ex-           30
+         *             20
+                     10
+         */
+        if(isLeftHeavy(node) && data<node.left.data)
+            return rightRotation(node);
+
+        //case1.2. if tree is left heavy and data is greater than node.left.data
+        /**
+         *           30
+         *       20
+         *         25
+         */
+        if (isLeftHeavy(node)&&data>node.left.data){
+            node.left=leftRotation(node.left);
+            return rightRotation(node);
         }
-        // if tree is right heavy.
-        if (isRightHeavy(node)) {
-            //if right child of node is left heavy.
-            if (balancedFactor(node.right) > 0) {
-                root.right=rightRotation(node.right);
-                return leftRotation(node.left);
-            }
-            //if tree is right skew tree.
-//            if (balancedFactor(node.right) < 0) {
-//                return leftRotation(node.left);
-//            }
+        // case2. if tree is right heavy and data is greater than node.right.data
+        /**
+         * ex-   10
+         *          20
+         *             30
+         */
+        if (isRightHeavy(node)&&data>node.right.data){
+            return leftRotation(node);
+        }
+        // case2.1 if tree is right heavy and data is less than node.right.data
+        /**
+         * ex-     10
+         *           20
+         *         15
+         */
+        if (isRightHeavy(node)&&data<node.right.data){
+            node.right=rightRotation(node.right);
+            return leftRotation(node);
         }
         return node;
     }
 
     /**
-     * formula for balance factor
-     *
-     * @param node
+     * method to calculate balance factor
      */
     private int balancedFactor(AVLNode node) {
         if (node == null) {
@@ -92,9 +102,7 @@ public class AVLTree {
         return (balancedFactor(node) < -1);
     }
 
-    /**
-     * left and right rotations
-     */
+    //right rotation
     private AVLNode rightRotation(AVLNode node) {
         AVLNode temp = node.left;
         AVLNode t2=temp.right;
@@ -106,7 +114,7 @@ public class AVLTree {
         temp.height = Math.max(height(temp.left), height(temp.right)) + 1;
         return temp;
     }
-
+    //left rotation
     private AVLNode leftRotation(AVLNode node) {
         AVLNode temp = node.right;
         AVLNode t2=temp.left;
@@ -120,9 +128,7 @@ public class AVLTree {
     }
 
 
-    /**
-     * inorder traversal
-     */
+    //inorder traversal
     public void inOrderTraversal() {
         inOrderTraversal(root);
     }
